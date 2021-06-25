@@ -12,6 +12,33 @@ export default {
   name: 'app',
   data () {
     return {
+      modalData: [
+        { x: 56.4, y: 85, lines: [
+          { text: 'ТСК-КМС', progressAll: 25, progressDone: 15 },
+          { text: 'ТСК-СП', progressAll: 25, progressDone: 15 },
+          ]
+        },
+        { x: 55.7, y: 37.6, lines: [
+            { text: 'МСК-СП', progressAll: 25, progressDone: 15 },
+            { text: 'МСК-БИМ', progressAll: 25, progressDone: 15 },
+          ]
+        },
+        { x: 55.8, y: 93.2, lines: [
+            { text: 'КРЯ-ДПС', progressAll: 25, progressDone: 15 },
+            { text: 'КРЯ-СП', progressAll: 25, progressDone: 15 },
+          ]
+        },
+        { x: 61.8, y: 129.8, lines: [
+            { text: 'ЯКТ-БИМ', progressAll: 25, progressDone: 15 },
+            { text: 'ЯКТ-АП', progressAll: 25, progressDone: 15 },
+          ]
+        },
+        { x: 54.8, y: 73.1, lines: [
+            { text: 'ОСК-БИМ', progressAll: 25, progressDone: 15 },
+            { text: 'ОСК-АП', progressAll: 25, progressDone: 15 },
+          ]
+        }
+      ]
     }
   },
 
@@ -20,32 +47,43 @@ export default {
     initDemoMap: function () {
         // get first cartography
       const token = 'pk.eyJ1Ijoic2hhbWlsMDgiLCJhIjoiY2txNjhnaTU1MTRqeTJ2bzZyYW5kZ2xnaiJ9.yji76OB2QSEe1cxKMcyjqA'
-        var Esri_WorldImagery = L.tileLayer(
-            `https://api.mapbox.com/styles/v1/shamil08/tiles/{z}/{x}/{y}?access_token={${token}}`, {
-                attribution: "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, " +
-                    "AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
-            }
-        );
+      const mapBox = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+        attribution: 'Initiator data &copy; <a href="https://mover.run">mover.run</a>, Meeting © <a href="https://www.prpr.ru/">Prpr</a>',
+        maxZoom: 18,
+        minZoom: 3,
+        id: 'mapbox/streets-v11',
+        tileSize: 512,
+        zoomOffset: -1,
+        accessToken: token
+      });
+
         // get second cartography
-        var Esri_DarkGreyCanvas = L.tileLayer(
+        const Esri_DarkGreyCanvas = L.tileLayer(
             "http://{s}.sm.mapstack.stamen.com/" +
             "(toner-lite,$fff[difference],$fff[@23],$fff[hsl-saturation@20])/" +
             "{z}/{x}/{y}.png", {
-                attribution: "Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, " +
-                    "NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community"
+                attribution: 'Initiator data &copy; <a href="https://mover.run">mover.run</a>, Meeting © <a href="https://www.prpr.ru/">Prpr</a>',
             }
         );
-        var baseLayers = {
-            Satellite: Esri_WorldImagery,
-            "Grey Canvas": Esri_DarkGreyCanvas
+        const baseLayers = {
+          'Светлый': mapBox,
+          'Темный': Esri_DarkGreyCanvas
         };
         // config map with Esri_WorldImagery initially
-        var map = L.map("map", {
-            layers: [Esri_WorldImagery]
-        });
-        map.setView([-22, 150], 5);
+      const map = L.map('map', { layers: [mapBox] });
+
+      map.setView([60, 80], 4);
+
+      this.modalData.forEach((item) => {
+        const marker = L.marker([item.x, item.y]).addTo(map)
+        const lines = item.lines.map(line => `<b>${line.text}</b>&#9737;&#9737;&#9737;<br>`)
+        marker
+          .bindTooltip(lines.join(''))
+          .openTooltip();
+      })
+
         // add control layer if we want to change the cartography
-        var layerControl = L.control.layers(baseLayers);
+        const layerControl = L.control.layers(baseLayers);
         layerControl.addTo(map);
 
         return {
@@ -66,7 +104,7 @@ export default {
     var velocityLayer = L.velocityLayer({
       displayValues: true,
       displayOptions: {
-          velocityType: "GBR Wind",
+          velocityType: 'GBR Wind',
           position: "bottomleft",
           emptyString: "No wind data",
           showCardinal: true
@@ -75,7 +113,7 @@ export default {
       maxVelocity: 10
     });
 
-    layerControl.addOverlay(velocityLayer, "Wind - Great Barrier Reef");
+    layerControl.addOverlay(velocityLayer, 'Показать всех пользователей');
 
     // add an event in zoom in or out
     map.on("zoomend", function(event) {

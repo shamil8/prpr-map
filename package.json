@@ -2,7 +2,7 @@
     "name": "leflet-layer-example",
     "description": "A Vue.js project",
     "version": "1.0.0",
-    "author": "ilyesMeritis <ilyes.fathallah@meritis.fr>",
+    "author": "Shamil Qurbonov <qurbonovshamil@gmila.com>",
     "license": "MIT",
     "private": true,
     "scripts": {
@@ -10,8 +10,8 @@
         "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
     },
     "dependencies": {
-        "leaflet-velocity": "^1.9.2",
         "leaflet": "1.7.0",
+        "leaflet-velocity": "^1.9.2",
         "vue": "^2.5.11"
     },
     "browserslist": [
