@@ -1,8 +1,22 @@
 <template>
+  <div class="container">
+    <vue-google-autocomplete
+      id="map-input"
+      ref="address"
+      :types="'geocode'"
+      :fields="['address_components', 'geometry']"
+      @placechanged="placeChanged"
+      classname="form-control"
+      placeholder="Адрес проекта"
+      country="ru"
+    />
+    <br><br><br><br><br>
     <div id="map"></div>
+  </div>
 </template>
 
 <script>
+import VueGoogleAutocomplete from 'vue-google-autocomplete'
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import "leaflet-velocity/dist/leaflet-velocity.js"
@@ -41,8 +55,15 @@ export default {
       ]
     }
   },
-
+  components: { VueGoogleAutocomplete },
   methods: {
+    placeChanged ({ latitude: lat, longitude: lon }) {
+      setTimeout(() => {
+        const payload = { lon, lat, address: this.$refs.address.autocompleteText }
+
+        console.log('payload', payload)
+      })
+    },
     // fixe map cartography
     initDemoMap: function () {
         // get first cartography
